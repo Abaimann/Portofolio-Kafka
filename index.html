@@ -1057,7 +1057,8 @@ html {
   z-index:0;
   pointer-events:none;
   opacity:0;
-  transition:opacity 1.2s
+  visibility:hidden;
+  transition:opacity 1.2s,visibility 1.2s
 }
 .stars {
   inset:0;
@@ -1091,7 +1092,8 @@ html {
   background:radial-gradient(circle at 62% 30%,rgba(150,140,110,.25) 0 9%,transparent 10%),radial-gradient(circle at 30% 62%,rgba(150,140,110,.22) 0 13%,transparent 14%),radial-gradient(circle at 68% 68%,rgba(150,140,110,.2) 0 7%,transparent 8%)
 }
 :root[data-tema="malam"] .stars,:root[data-tema="malam"] .moon {
-  opacity:1
+  opacity:1;
+  visibility:visible
 }
 .stage {
   filter:var(--photo)
@@ -2429,6 +2431,8 @@ h1,.work h2,.stack h2,.contact h2,.job,.ct-h,.ft-name {
     .matches;
   var last = window.scrollY;
   var tick = false;
+  var H = 0;
+  var lastCur = -1;
 
   var links = [].slice
     .call(
@@ -2445,10 +2449,20 @@ h1,.work h2,.stack h2,.contact h2,.job,.ct-h,.ft-name {
         .getElementById(a.dataset.s);
     });
 
+  function measure() {
+    H = h.offsetHeight;
+    var sy = window.scrollY;
+    secs
+      .forEach(function (s) {
+        s._docTop = s
+          .getBoundingClientRect()
+          .top + sy;
+      });
+  }
+
   function upd() {
     tick = false;
     var y = window.scrollY;
-    var H = h.offsetHeight;
 
     if (!rm && y <= H * 1.1) {
       h.style
@@ -2477,19 +2491,20 @@ h1,.work h2,.stack h2,.contact h2,.job,.ct-h,.ft-name {
     if (up || down) last = y;
 
     var cur = 0;
+    var mid = innerHeight * .5;
     secs
       .forEach(function (s, i) {
-        var top = s
-          .getBoundingClientRect()
-          .top;
-        if (top < innerHeight * .5) cur = i;
+        if (s._docTop - y < mid) cur = i;
       });
 
-    links
-      .forEach(function (a, i) {
-        a.classList
-          .toggle('on', i === cur);
-      });
+    if (cur !== lastCur) {
+      lastCur = cur;
+      links
+        .forEach(function (a, i) {
+          a.classList
+            .toggle('on', i === cur);
+        });
+    }
   }
 
   addEventListener('scroll', function () {
@@ -2499,6 +2514,13 @@ h1,.work h2,.stack h2,.contact h2,.job,.ct-h,.ft-name {
     }
   }, { passive: true });
 
+  addEventListener('resize', measure);
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready
+      .then(measure);
+  }
+
+  measure();
   upd();
 })();
 </script>
@@ -2656,7 +2678,7 @@ h1,.work h2,.stack h2,.contact h2,.job,.ct-h,.ft-name {
   }
 
   function go() {
-    if (!run) {
+    if (!run && live) {
       run = 1;
       requestAnimationFrame(f);
     }
@@ -2683,11 +2705,23 @@ h1,.work h2,.stack h2,.contact h2,.job,.ct-h,.ft-name {
 
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(function (es) {
-      live = es[0].isIntersecting;
+      live = es[0].isIntersecting ? 1 : 0;
       if (live) go();
+      else run = 0;
     })
       .observe(h);
   }
+
+  document
+    .addEventListener('visibilitychange', function () {
+      if (document.hidden) {
+        live = 0;
+        run = 0;
+      } else {
+        live = 1;
+        go();
+      }
+    });
 
   go();
 })();
@@ -2862,6 +2896,7 @@ h1,.work h2,.stack h2,.contact h2,.job,.ct-h,.ft-name {
   var vl = [0, 0, 0];
   var hd = [0, 0, 0];
   var ini = 0;
+  var inView = true;
 
   function paint(now) {
     var dt = Math.min(now - (last || now), 48);
@@ -2894,7 +2929,7 @@ h1,.work h2,.stack h2,.contact h2,.job,.ct-h,.ft-name {
   }
 
   function kick() {
-    if (!run) {
+    if (!run && inView) {
       run = 1;
       last = 0;
       requestAnimationFrame(paint);
@@ -2988,7 +3023,7 @@ h1,.work h2,.stack h2,.contact h2,.job,.ct-h,.ft-name {
 
   addEventListener('scroll', function () {
     aim = scrollY;
-    kick();
+    if (inView) kick();
   }, { passive: true });
 
   var rt;
@@ -3020,6 +3055,15 @@ h1,.work h2,.stack h2,.contact h2,.job,.ct-h,.ft-name {
         }
       });
   }, { threshold: .25 })
+    .observe(s);
+
+  new IntersectionObserver(function (es) {
+    inView = es[0].isIntersecting;
+    if (inView) {
+      cur = aim = scrollY;
+      kick();
+    }
+  }, { rootMargin: '300px 0px' })
     .observe(s);
 })();
 </script>
@@ -3083,6 +3127,19 @@ h1,.work h2,.stack h2,.contact h2,.job,.ct-h,.ft-name {
   var KY = [.45, .28, .6, .35];
   var KR = [-.05, .05, .04, -.04];
   var vA = scrollY, vC = vA, vT = 0, vR = 0;
+  var inView = true;
+  var pDocTop = 0, hDocTop = 0;
+  var lastH = -1, lastQ = -1;
+
+  function measure() {
+    var sy = scrollY;
+    pDocTop = p
+      .getBoundingClientRect()
+      .top + sy;
+    hDocTop = h
+      .getBoundingClientRect()
+      .top + sy;
+  }
 
   function vs(now) {
     var dt = Math.min(now - (vT || now), 48);
@@ -3092,13 +3149,15 @@ h1,.work h2,.stack h2,.contact h2,.job,.ct-h,.ft-name {
     d = vA - vC;
     b = Math.abs(d) > .3;
 
-    PX
-      .forEach(function (e, i) {
-        var y = b ? -120 * Math.tanh(d * KY[i] / 120) : 0;
-        var r = b ? Math.max(-14, Math.min(14, d * KR[i])) : 0;
-        e.style.translate = '0 ' + y.toFixed(1) + 'px';
-        e.style.rotate = r.toFixed(2) + 'deg';
-      });
+    if (inView) {
+      PX
+        .forEach(function (e, i) {
+          var y = b ? -120 * Math.tanh(d * KY[i] / 120) : 0;
+          var r = b ? Math.max(-14, Math.min(14, d * KR[i])) : 0;
+          e.style.translate = '0 ' + y.toFixed(1) + 'px';
+          e.style.rotate = r.toFixed(2) + 'deg';
+        });
+    }
 
     if (b) {
       requestAnimationFrame(vs);
@@ -3110,7 +3169,7 @@ h1,.work h2,.stack h2,.contact h2,.job,.ct-h,.ft-name {
 
   addEventListener('scroll', function () {
     vA = scrollY;
-    if (!vR) {
+    if (!vR && inView) {
       vR = 1;
       vT = 0;
       requestAnimationFrame(vs);
@@ -3128,25 +3187,33 @@ h1,.work h2,.stack h2,.contact h2,.job,.ct-h,.ft-name {
 
   function up() {
     tk = 0;
+    if (!inView) return;
+
+    var sy = scrollY;
     var vh = innerHeight;
     var ms = document.documentElement.scrollHeight - vh;
-    var ae = scrollY >= ms - 4;
-    var r = p
-      .getBoundingClientRect();
-    var hr = h
-      .getBoundingClientRect();
+    var ae = sy >= ms - 4;
+    var rTop = pDocTop - sy;
+    var hrTop = hDocTop - sy;
     var n = W.length;
-    var z = Math.max(vh * .25, r.top + scrollY - ms);
-    var q = ae ? 1 : c((vh - r.top) / (vh - z));
+    var z = Math.max(vh * .25, rTop + sy - ms);
+    var q = ae ? 1 : c((vh - rTop) / (vh - z));
+    var hVal = ae ? 1 : c((vh * .75 - hrTop) / (vh * .6));
 
-    s.style
-      .setProperty('--h', ae ? 1 : c((vh * .75 - hr.top) / (vh * .6)));
+    if (Math.abs(hVal - lastH) > .002) {
+      lastH = hVal;
+      s.style
+        .setProperty('--h', hVal.toFixed(3));
+    }
 
-    W
-      .forEach(function (e, i) {
-        e.style
-          .setProperty('--e', c((q * (n + 14) - i) / 14));
-      });
+    if (Math.abs(q - lastQ) > .002) {
+      lastQ = q;
+      W
+        .forEach(function (e, i) {
+          e.style
+            .setProperty('--e', c((q * (n + 14) - i) / 14));
+        });
+    }
 
     if (q >= .98) {
       s.classList
@@ -3162,7 +3229,17 @@ h1,.work h2,.stack h2,.contact h2,.job,.ct-h,.ft-name {
   }
 
   addEventListener('scroll', rq, { passive: true });
-  addEventListener('resize', rq);
+  addEventListener('resize', function () {
+    measure();
+    rq();
+  });
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready
+      .then(measure);
+  }
+
+  measure();
   up();
 
   new IntersectionObserver(function (e, io) {
@@ -3180,6 +3257,15 @@ h1,.work h2,.stack h2,.contact h2,.job,.ct-h,.ft-name {
       s.classList
         .toggle('ic', e[0].isIntersecting);
     }, { threshold: .25 })
+      .observe(s);
+
+    new IntersectionObserver(function (entries) {
+      inView = entries[0].isIntersecting;
+      if (inView) {
+        measure();
+        rq();
+      }
+    }, { rootMargin: '300px 0px' })
       .observe(s);
   } else {
     s.classList
@@ -3213,6 +3299,9 @@ h1,.work h2,.stack h2,.contact h2,.job,.ct-h,.ft-name {
       s.querySelectorAll('.ex-row')
     );
   var tk = 0;
+  var inView = true;
+  var sDocTop = 0, hDocTop = 0;
+  var lastH = -1;
 
   h
     .setAttribute('aria-label', t);
@@ -3255,9 +3344,33 @@ h1,.work h2,.stack h2,.contact h2,.job,.ct-h,.ft-name {
       }
     }, { threshold: .3 })
       .observe(h);
+
+    new IntersectionObserver(function (entries) {
+      inView = entries[0].isIntersecting;
+      if (inView) {
+        measure();
+        rq();
+      }
+    }, { rootMargin: '300px 0px' })
+      .observe(s);
   } else {
     s.classList
       .add('in');
+  }
+
+  function measure() {
+    var sy = scrollY;
+    sDocTop = s
+      .getBoundingClientRect()
+      .top + sy;
+    hDocTop = h
+      .getBoundingClientRect()
+      .top + sy;
+
+    R
+      .forEach(function (r) {
+        r._top = r.offsetTop;
+      });
   }
 
   /* progres tiap baris: 0 saat baris baru masuk dari bawah layar, 1 saat sudah naik ke sekitar 62% tinggi layar. Baris paling bawah dijamin mencapai 1 di akhir halaman */
@@ -3271,33 +3384,39 @@ h1,.work h2,.stack h2,.contact h2,.job,.ct-h,.ft-name {
 
   function up() {
     tk = 0;
+    if (!inView) return;
+
     var vh = innerHeight;
     var sy = scrollY;
     var ms = document.documentElement.scrollHeight - vh;
-    var st = s
-      .getBoundingClientRect()
-      .top;
-    var ht = h
-      .getBoundingClientRect()
-      .top;
+    var st = sDocTop - sy;
+    var ht = hDocTop - sy;
+    var hVal = c((vh * .75 - ht) / (vh * .6));
 
-    s.style
-      .setProperty(
-        '--h',
-        c((vh * .75 - ht) / (vh * .6))
-          .toFixed(3)
-      );
+    if (Math.abs(hVal - lastH) > .002) {
+      lastH = hVal;
+      s.style
+        .setProperty(
+          '--h',
+          hVal
+            .toFixed(3)
+        );
+    }
 
     R
       .forEach(function (r) {
-        var top = st + r.offsetTop;
+        var top = st + (r._top || 0);
         var end = Math.max(vh * .62, top + sy - ms);
-        r.style
-          .setProperty(
-            '--p',
-            e((end + vh * .3 - top) / (vh * .3))
-              .toFixed(3)
-          );
+        var pVal = e((end + vh * .3 - top) / (vh * .3));
+        if (Math.abs(pVal - (r._lastP || 0)) > .002) {
+          r._lastP = pVal;
+          r.style
+            .setProperty(
+              '--p',
+              pVal
+                .toFixed(3)
+            );
+        }
       });
   }
 
@@ -3306,13 +3425,17 @@ h1,.work h2,.stack h2,.contact h2,.job,.ct-h,.ft-name {
   }
 
   addEventListener('scroll', rq, { passive: true });
-  addEventListener('resize', rq);
+  addEventListener('resize', function () {
+    measure();
+    rq();
+  });
 
   if (document.fonts && document.fonts.ready) {
     document.fonts.ready
-      .then(rq);
+      .then(measure);
   }
 
+  measure();
   up();
 })();
 </script>
@@ -3326,6 +3449,9 @@ h1,.work h2,.stack h2,.contact h2,.job,.ct-h,.ft-name {
     .querySelector('.pj-title');
   var n = 0;
   var tk = 0;
+  var inView = true;
+  var hDocTop = 0;
+  var lastH = -1;
 
   h
     .setAttribute(
@@ -3363,6 +3489,12 @@ h1,.work h2,.stack h2,.contact h2,.job,.ct-h,.ft-name {
   s.classList
     .add('pj-js');
 
+  function measure() {
+    hDocTop = h
+      .getBoundingClientRect()
+      .top + scrollY;
+  }
+
   function c(x) {
     return Math
       .min(1, Math.max(0, x));
@@ -3370,16 +3502,21 @@ h1,.work h2,.stack h2,.contact h2,.job,.ct-h,.ft-name {
 
   function up() {
     tk = 0;
+    if (!inView) return;
+
     var vh = innerHeight;
-    var top = h
-      .getBoundingClientRect()
-      .top;
-    s.style
-      .setProperty(
-        '--h',
-        c((vh * .75 - top) / (vh * .6))
-          .toFixed(3)
-      );
+    var top = hDocTop - scrollY;
+    var hVal = c((vh * .75 - top) / (vh * .6));
+
+    if (Math.abs(hVal - lastH) > .002) {
+      lastH = hVal;
+      s.style
+        .setProperty(
+          '--h',
+          hVal
+            .toFixed(3)
+        );
+    }
   }
 
   function rq() {
@@ -3387,7 +3524,17 @@ h1,.work h2,.stack h2,.contact h2,.job,.ct-h,.ft-name {
   }
 
   addEventListener('scroll', rq, { passive: true });
-  addEventListener('resize', rq);
+  addEventListener('resize', function () {
+    measure();
+    rq();
+  });
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready
+      .then(measure);
+  }
+
+  measure();
   up();
 
   if ('IntersectionObserver' in window) {
@@ -3400,6 +3547,15 @@ h1,.work h2,.stack h2,.contact h2,.job,.ct-h,.ft-name {
       }
     }, { threshold: .3 })
       .observe(h);
+
+    new IntersectionObserver(function (entries) {
+      inView = entries[0].isIntersecting;
+      if (inView) {
+        measure();
+        rq();
+      }
+    }, { rootMargin: '300px 0px' })
+      .observe(s);
   } else {
     s.classList
       .add('in');
@@ -3464,19 +3620,35 @@ document
 
   var tk = 0;
 
+  function measure() {
+    var sy = scrollY;
+    D
+      .forEach(function (d) {
+        d._k = +d.style
+          .getPropertyValue('--k') || 0;
+        d._mid = d.offsetTop + d.offsetHeight / 2;
+        d._parentDocTop = d.parentElement
+          .getBoundingClientRect()
+          .top + sy;
+      });
+  }
+
   function up() {
     tk = 0;
     var vh = innerHeight;
+    var sy = scrollY;
+
     D
       .forEach(function (d) {
-        var r = d.parentElement
-          .getBoundingClientRect();
-        var k = +d.style
-          .getPropertyValue('--k');
-        var y = r.top + d.offsetTop + d.offsetHeight / 2 - vh / 2;
+        var parentTop = (d._parentDocTop || 0) - sy;
+        var y = parentTop + (d._mid || 0) - vh / 2;
         var s = Math
-          .max(-140, Math.min(140, y * k));
-        d.style.translate = '0 ' + s.toFixed(1) + 'px';
+          .max(-140, Math.min(140, y * d._k));
+
+        if (Math.abs(s - (d._lastS || 0)) >= .2) {
+          d._lastS = s;
+          d.style.translate = '0 ' + s.toFixed(1) + 'px';
+        }
       });
   }
 
@@ -3485,7 +3657,17 @@ document
   }
 
   addEventListener('scroll', rq, { passive: true });
-  addEventListener('resize', rq);
+  addEventListener('resize', function () {
+    measure();
+    rq();
+  });
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready
+      .then(measure);
+  }
+
+  measure();
   up();
 })();
 </script>
@@ -3570,12 +3752,12 @@ document
         el
           .matches('textarea,select,input,[contenteditable="true"]')
       ) return true;
+      if (el.scrollHeight <= el.clientHeight + 2) continue;
       var style = getComputedStyle(el);
       if (
         !/auto|scroll|overlay/
           .test(style.overflowY)
       ) continue;
-      if (el.scrollHeight <= el.clientHeight + 2) continue;
       if (direction > 0 && el.scrollTop < el.scrollHeight - el.clientHeight - 2) return true;
       if (direction < 0 && el.scrollTop > 2) return true;
     }
