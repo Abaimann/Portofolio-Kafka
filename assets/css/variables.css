@@ -1,0 +1,113 @@
+/* ==========================================================================
+   VARIABLES & THEMING
+   ========================================================================== */
+
+@property --sky1 {
+  syntax:"<color>";
+  inherits:true;
+  initial-value:#000
+}
+@property --sky2 {
+  syntax:"<color>";
+  inherits:true;
+  initial-value:#000
+}
+@property --sky3 {
+  syntax:"<color>";
+  inherits:true;
+  initial-value:#000
+}
+@property --sky4 {
+  syntax:"<color>";
+  inherits:true;
+  initial-value:#000
+}
+@property --sky5 {
+  syntax:"<color>";
+  inherits:true;
+  initial-value:#000
+}
+@property --paper {
+  syntax:"<color>";
+  inherits:true;
+  initial-value:#000
+}
+
+:root {
+  --sky1:#1558c9;
+  --sky2:#2f7de8;
+  --sky3:#5aa7f4;
+  --sky4:#9ccdf9;
+  --sky5:#d6ebfd;
+  --paper:#fff;
+  --loader:#0d2c63;
+  --deep:#0d2c63;
+  --deep2:#0a1f4a;
+  --ink:var(--deep);
+  --a1:#1558c9;
+  --a2:#3b9bf0;
+  --a3:#7cc4ff;
+  --hz:255,252,230;
+  --cl:255,255,255;
+  --sun:255,255,235;
+  --sun2:255,238,170;
+  --photo:none;
+  box-sizing:border-box;
+  transition:--sky1 .9s,--sky2 .9s,--sky3 .9s,--sky4 .9s,--sky5 .9s,--paper .9s
+}
+
+/* Tema: Siang (biru, default) | Malam */
+:root[data-tema="malam"] {
+  --sky1:#000;
+  --sky2:#060606;
+  --sky3:#0f0f10;
+  --sky4:#1b1b1d;
+  --sky5:#2c2c2f;
+  --paper:#000;
+  --loader:#f2f2f2;
+  --deep:#000;
+  --deep2:#0b0b0b;
+  --a1:#6b6b70;
+  --a2:#9a9aa0;
+  --a3:#d0d0d4;
+  --hz:120,120,128;
+  --cl:70,70,76;
+  --sun:235,235,240;
+  --sun2:140,140,150;
+  --photo:brightness(.82) saturate(.85)
+}
+
+/* Mode Malam: Warna tematik tiap seksi */
+:root[data-tema="malam"] .ab {
+  --hf:#fff
+}
+
+:root[data-tema="malam"] .ex {
+  --ex-ink:#000;
+  --ex-mute:#59616b;
+  --ex-line:rgba(0,0,0,.22);
+  --ex-fill:#000;
+  background:#fff
+}
+
+:root[data-tema="malam"] .ex-l {
+  -webkit-text-stroke-color:#000;
+  --fc:color-mix(in srgb,var(--ex-fill) calc(var(--h,0)*100%),#fff)
+}
+
+:root[data-tema="malam"] .pj {
+  --pj-bg:var(--paper);
+  --pj-ink:var(--loader);
+  --pj-hf:#fff;
+  --pj-ph:#1a1a1a
+}
+
+:root[data-tema="malam"] .ct {
+  --ct-bg:#fff;
+  --ct-ink:#000
+}
+
+:root[data-tema="malam"] .ft {
+  --ft-bg:var(--paper);
+  --ft-ink:var(--loader)
+}

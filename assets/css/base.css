@@ -1,0 +1,77 @@
+/* ==========================================================================
+   BASE & RESET STYLES
+   ========================================================================== */
+
+*,*::before,*::after {
+  box-sizing:inherit
+}
+
+html,body {
+  height:100%;
+  margin:0;
+  background:var(--paper);
+  font-family:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+  -webkit-font-smoothing:antialiased
+}
+
+html {
+  scroll-behavior:smooth
+}
+
+/* Typography Headings Accent */
+h1,.work h2,.stack h2,.contact h2,.job,.ct-h,.ft-name {
+  font-family:"Space Grotesk","Manrope",sans-serif
+}
+
+/* Screen reader only utility */
+.sr, .ct-sr {
+  position:absolute;
+  width:1px;
+  height:1px;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0 0 0 0);
+  white-space:nowrap
+}
+
+/* Minimalist contrast cursor */
+@media (hover:hover) and (pointer:fine) {
+  html,body {
+    cursor:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M3%202.2v18l5.1-4.8%203.6%206.6%203.1-1.7-3.6-6.4H20Z%22%20fill%3D%22%23141b28%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%221.6%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E") 3 2,auto
+  }
+  :root[data-tema="malam"],:root[data-tema="malam"] body {
+    cursor:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M3%202.2v18l5.1-4.8%203.6%206.6%203.1-1.7-3.6-6.4H20Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%23161616%22%20stroke-width%3D%221.6%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E") 3 2,auto
+  }
+  a,button,summary,[role="button"],.aperture {
+    cursor:pointer
+  }
+  input,textarea,[contenteditable="true"] {
+    cursor:text
+  }
+}
+
+/* Lingkar tipis singkat saat klik desktop */
+.cursor-tap {
+  position:fixed;
+  z-index:9999;
+  width:18px;
+  height:18px;
+  border:1.5px solid var(--a2);
+  border-radius:50%;
+  pointer-events:none;
+  animation:cursor-tap .38s ease-out both
+}
+
+/* Reduced Motion global fallbacks */
+@media (prefers-reduced-motion:reduce) {
+  *,*::before,*::after {
+    animation:none!important;
+    transition:none!important
+  }
+  html {
+    scroll-behavior:auto
+  }
+  .loader,.flash,.cursor-tap {
+    display:none
+  }
+}

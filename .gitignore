@@ -1,0 +1,22 @@
+# Operating System Artifacts
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor & IDE Directories
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Logs and Runtime Cache
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Node / Python Environment
+node_modules/
+__pycache__/
+*.py[cod]
+*$py.class
