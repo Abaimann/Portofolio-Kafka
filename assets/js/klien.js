@@ -108,6 +108,28 @@
     [1.55, 1.7, 1.6, 1.5, 1.75, 1.45, 1.65, 1.55],
     [1.4, 1.65, 1.5, 1.8, 1.45, 1.6, 1.5, 1.7]
   ];
+  var IMGS = [
+    [
+      'assets/images/gallery/gal-1.webp',
+      'assets/images/gallery/gal-2.webp',
+      'assets/images/gallery/gal-3.webp',
+      'assets/images/gallery/gal-4.webp',
+      'assets/images/gallery/gal-5.webp',
+      'assets/images/gallery/gal-6.webp',
+      'assets/images/gallery/gal-7.webp',
+      'assets/images/gallery/gal-8.webp'
+    ],
+    [
+      'assets/images/gallery/gal-9.webp',
+      'assets/images/gallery/gal-10.webp',
+      'assets/images/gallery/gal-11.webp',
+      'assets/images/gallery/gal-12.webp',
+      'assets/images/gallery/gal-13.webp',
+      'assets/images/gallery/gal-14.webp',
+      'assets/images/gallery/gal-15.webp',
+      'assets/images/gallery/gal-16.webp'
+    ]
+  ];
 
   s
     .querySelectorAll('.kl-gal .kl-track')
@@ -115,7 +137,15 @@
       var h = '';
       AR[j]
         .forEach(function (a, i) {
-          h += '<li class="kl-card" style="--ar:' + a + '">' + mk(i + j * 3) + '</li>';
+          var imgPath = IMGS[j][i];
+          h +=
+            '<li class="kl-card" style="--ar:' +
+            a +
+            '"><img src="' +
+            imgPath +
+            '" alt="Preview Karya ' +
+            (i + j * 8 + 1) +
+            '" loading="lazy" decoding="async"></li>';
         });
       t.innerHTML = h;
     });

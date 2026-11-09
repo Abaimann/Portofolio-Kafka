@@ -17,7 +17,7 @@ Portofolio web modern, interaktif, dan ultra-ringan milik Kafka (Frontend Develo
   - Bingkai bidik *viewfinder* dengan tipografi raksasa interaktif `KAFKA`.
   - Simulasi kedalaman *parallax* bertingkat saat mouse digerakkan (*pointermove*) lengkap dengan perspektif 3D tilt pada potret diri.
 - **⚡ Interactive Tools & Client Carousel**:
-  - Dua lajur kartu galeri abstrak dengan manipulasi sentuh (*swipe*), tarikan mouse (*drag*), roda *trackpad*, serta akselerasi mengikuti kecepatan *scroll*.
+  - Dua lajur kartu galeri karya interaktif (Webora, BuildHauss, Djeroe, EduLink, SLBB, Bangodua, Razita, dll.) dengan manipulasi sentuh (*swipe*), tarikan mouse (*drag*), roda *trackpad*, serta akselerasi mengikuti kecepatan *scroll*.
   - Logo stack teknologi (HTML, CSS, JS, TS, React, Next.js, Vue, Tailwind CSS, GSAP, Vite, Git, Figma, Vitest, Lighthouse).
 - **📖 About Me Typography Reveal**:
   - Huruf dan kata dipecah dinamis (*staggered character reveal*).
@@ -25,7 +25,10 @@ Portofolio web modern, interaktif, dan ultra-ringan milik Kafka (Frontend Develo
 - **💼 Pengalaman Kerja Berurutan**:
   - Kartu hitam bergaya *services showcase* dengan penomoran bergaris tipis dan metrik progres per baris yang mulus.
 - **📁 Projects Showcase (Sticky Stack Cards)**:
-  - Tampilan kartu bertumpuk (*sticky stacking cards*) dengan ornamen dekorasi geometris 3D mengambang.
+  - Tampilan kartu bertumpuk (*sticky stacking cards*) dengan preview galeri gambar asli untuk tiap proyek:
+    1. **Djeroe Coffee Shop**: Website interaktif kafe modern dengan katalog menu & suasana kafe.
+    2. **BuildHauss Architecture**: Portfolio studio arsitektur, ruang interior & visualisasi 3D isometrik.
+    3. **Webora Digital Agency**: Profil agensi digital, platform EduLink, dan dashboard sistem monitoring.
 - **✉️ Form Kontak Cepat & Minimalist Tap Cursor**:
   - Integrasi form pesan instan ke email klien.
   - Efek cincin aksen klik ringan (*cursor tap ring*) untuk pengguna desktop mouse.
@@ -43,8 +46,8 @@ Website ini telah melalui perombakan dan optimalisasi arsitektur secara menyelur
    - Seluruh skrip JavaScript ditulis dengan konsistensi gaya **Method Chaining Vertikal** berindentasi satu tingkat.
 
 2. **Ekstraksi & Optimasi Aset Gambar**:
-   - Gambar potret berukuran 144 KB base64 yang sebelumnya tertanam langsung di HTML diekstrak menjadi file WebP lokal yang dioptimalkan (`assets/images/kafka.webp`, ~105 KB).
-   - Menghilangkan *layout shift* (CLS = 0) dan mempercepat *First Contentful Paint* (FCP).
+   - Gambar potret berukuran 144 KB base64 diekstrak menjadi file WebP lokal yang dioptimalkan (`assets/images/kafka.webp`, ~105 KB).
+   - Seluruh gambar showcase proyek (`assets/images/projects/`) dan galeri karya (`assets/images/gallery/`) dikonversi ke WebP terkompresi tinggi (rata-rata 10–50 KB per gambar) dengan atribut `loading="lazy"` dan `decoding="async"`.
    - Dilengkapi icon tab browser lengkap (*favicon multi-size*): `favicon.ico`, `favicon-32x32.png`, `favicon.png` (192x192), dan `apple-touch-icon.png` (180x180).
 
 3. **Eliminasi Layout Thrashing (Forced Reflows)**:
@@ -65,7 +68,7 @@ Website ini telah melalui perombakan dan optimalisasi arsitektur secara menyelur
 Portofolio-Kafka/
 ├── .gitignore
 ├── README.md
-├── index.html
+├── index.html               # Bersih & ramping (~27 KB)
 ├── favicon.ico
 ├── favicon-32x32.png
 ├── favicon.png
@@ -80,12 +83,18 @@ Portofolio-Kafka/
     │   ├── theme.js           # Pengelola tema siang/malam otomatis & manual
     │   ├── hero.js            # Efek parallax 3D hero & generator bintang
     │   ├── navigation.js      # Pengontrol dock navigasi & scroll-spy
-    │   ├── klien.js           # Carousel interaktif logo & kartu karya
+    │   ├── klien.js           # Carousel interaktif logo & kartu karya nyata
     │   ├── sections.js        # Logika interaktif seksi About, Ex, Projects, 3D
     │   ├── scroll.js          # Pembatas kecepatan scroll wheel & efek klik
     │   └── app.js             # Inisialisasi utama aplikasi & tech stack
     └── images/
-        └── kafka.webp         # Foto potret Kafka (WebP teroptimasi)
+        ├── kafka.webp         # Foto potret Kafka (WebP teroptimasi)
+        ├── projects/          # Gambar screenshot showcase proyek nyata
+        │   ├── djeroe-1.webp ...
+        │   ├── buildhauss-1.webp ...
+        │   └── webora-1.webp ...
+        └── gallery/           # Gambar preview untuk carousel klien
+            ├── gal-1.webp ... gal-16.webp
 ```
 
 ---
